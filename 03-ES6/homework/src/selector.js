@@ -1,26 +1,20 @@
 
-var traverseDomAndCollectElements = function (matchFunc, startEl, resultSet = []) {
-  // var resultSet = [];
+var traverseDomAndCollectElements = function (matchFunc, startEl/* , resultSet = [] */) {
+  var resultSet = [];
   if (typeof startEl === "undefined") {
     var startEl = document.body;
   }
   // recorre el árbol del DOM y recolecta elementos que matchien en resultSet
   // usa matchFunc para identificar elementos que matchien
   // TU CÓDIGO AQUÍ
-
-  //1ro checkea si matchiea
   if (matchFunc(startEl)) {
-    //va rellenando el array con los q encuentre
     resultSet.unshift(startEl)
-
   }
-  //debo hacer procedimientos recursivos sin retorno
-  //
-  //voy a usar .nextElementSibling y .firstElementChild
-  //checkea primer nivel y va rellenando array
-  if (startEl.firstElementChild) traverseDomAndCollectElements(matchFunc, startEl.firstElementChild, resultSet)
-  if (startEl.nextElementSibling) traverseDomAndCollectElements(matchFunc, startEl.nextElementSibling, resultSet)
-  //devuelve el array rellenado
+  if (startEl.firstElementChild)
+    resultSet = [...resultSet, ...traverseDomAndCollectElements(matchFunc, startEl.firstElementChild)]
+
+  if (startEl.nextElementSibling)
+    resultSet = [...resultSet, ...traverseDomAndCollectElements(matchFunc, startEl.nextElementSibling)]
   return resultSet
 };
 
@@ -62,9 +56,9 @@ var matchFunctionMaker = function (selector) {
   } else if (selectorType === "tag.class") {
     matchFunction = (ele) => {
       //debo separar selector
-      const [miTag,miClass] = selector.split('.')
+      const [miTag, miClass] = selector.split('.')
       //no me gushta, no me gushta // hacerlo con recursividad mejor
-      return matchFunctionMaker(miTag)(ele) && matchFunctionMaker('.' + miClass)(ele) 
+      return matchFunctionMaker(miTag)(ele) && matchFunctionMaker('.' + miClass)(ele)
     }
   } else if (selectorType === "tag") {
     matchFunction = (elementus) => {
