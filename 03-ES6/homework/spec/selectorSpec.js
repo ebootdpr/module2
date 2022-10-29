@@ -92,6 +92,13 @@ describe("matchFunctionMaker", function() {
     sampleEl.className = "photos lightback abstract"; // el elemento tiene tres distintas clases
     expect(matcher(sampleEl)).toEqual(false);
   });
+  it("debería ser capaz de matchiar tag.class para tag con multiples clases", function() {
+    var selector = "img.lightback";
+    var matcher = matchFunctionMaker(selector);
+    var sampleEl = document.createElement("img");
+    sampleEl.className = "photos lightback abstract"; // el elemento tiene tres distintas clases
+    expect(matcher(sampleEl)).toEqual(true);
+  });
 
 });
 

@@ -1,0 +1,9 @@
+	* Framework
+    Framework es un paquete de herramientas que se pueden importar para asi trabajar menos. Todo lo que provee ese paquete se podría hacer a mano pero tardaríamos mas tiempo en terminar un proyecto.
+
+	* Preprocesador
+    Es como un lenguaje de programacion que convierte la logica que escribamos en codigo CSS puro por lo que es leible por los navegadores web.
+
+
+	* Responsive website
+    Que la pagina web se pueda usar. Ya sea en distintos dispositivos (tamaño pantalla) o bien que detecte touchpads y esas cosas.
