@@ -1,5 +1,5 @@
 
-var traverseDomAndCollectElements = function (matchFunc, startEl/* , resultSet = [] */) {
+var traverseDomAndCollectElements = function (matchFunc, startEl) {
   var resultSet = [];
   if (typeof startEl === "undefined") {
     var startEl = document.body;
@@ -54,11 +54,11 @@ var matchFunctionMaker = function (selector) {
     }
 
   } else if (selectorType === "tag.class") {
-    matchFunction = (ele) => {
+    matchFunction = (elementus) => {
       //debo separar selector
       const [miTag, miClass] = selector.split('.')
       //no me gushta, no me gushta // hacerlo con recursividad mejor
-      return matchFunctionMaker(miTag)(ele) && matchFunctionMaker('.' + miClass)(ele)
+      return matchFunctionMaker(miTag)(elementus) && matchFunctionMaker('.' + miClass)(elementus)
     }
   } else if (selectorType === "tag") {
     matchFunction = (elementus) => {
@@ -68,15 +68,26 @@ var matchFunctionMaker = function (selector) {
   return matchFunction;
 };
 
-
+// $('div > img')
+// seleccionaría todos los <img> tags 
+// hijos directos de <div> tags.
+var jerarKIKO = function (selector, elements) {
+  const [tagPadre, tagHijo] = selector.split(' > ')
+  const arrHijos = $(tagHijo)
+  console.log(arrHijos)
+  for (const hijo of arrHijos) {
+    if (hijo.parentElement) {
+      if (hijo.parentElement.tagName == tagPadre.toUpperCase()) {
+        elements.push(hijo)
+      }
+    }
+  }
+  return elements
+}
 var $ = function (selector) {
-  var elements;
-  var selectorMatchFunc = matchFunctionMaker(selector); //crea una funcion por closure
-  elements = traverseDomAndCollectElements(selectorMatchFunc); //le pasa UN callback
-  //dentro de traverseDomAndCollectELements()
-  // debemos invocar selectorMatchFunc(conCadaElementoEncontrado)
-  //y esa funcion rellena un array
+  var elements = [];
+  if (selector.includes(' > ')) return jerarKIKO(selector, elements)
+  var selectorMatchFunc = matchFunctionMaker(selector);
+  elements = traverseDomAndCollectElements(selectorMatchFunc);
   return elements;
 };
-
-
