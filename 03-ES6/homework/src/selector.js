@@ -15,6 +15,7 @@ var traverseDomAndCollectElements = function (matchFunc, startEl, resultSet = []
 
   }
   //debo hacer procedimientos recursivos sin retorno
+  //
   //voy a usar .nextElementSibling y .firstElementChild
   //checkea primer nivel y va rellenando array
   if (startEl.firstElementChild) traverseDomAndCollectElements(matchFunc, startEl.firstElementChild, resultSet)
@@ -47,12 +48,10 @@ var matchFunctionMaker = function (selector) {
   var selectorType = selectorTypeMatcher(selector);
   var matchFunction;
   if (selectorType === "id") {
-    return function (elementus) {
-      return (elementus.id === selector.slice(1))
-    }
+    matchFunction = (elementus) => ('#' + elementus.id === selector)
   } else if (selectorType === "class") {
 
-    return function (elementus) {
+    matchFunction = (elementus) => {
       for (let i = 0; i < elementus.classList.length; i++) {
         const element = elementus.classList[i];
         if (element === selector.slice(1)) return true
@@ -61,21 +60,18 @@ var matchFunctionMaker = function (selector) {
     }
 
   } else if (selectorType === "tag.class") {
-    return function (elementronico) {
+    matchFunction = (ele) => {
       //debo separar selector
-      let arr = selector.split('.')
+      const [miTag,miClass] = selector.split('.')
       //no me gushta, no me gushta // hacerlo con recursividad mejor
-      if (arr[0].toUpperCase() === elementronico.tagName) {
-        return matchFunctionMaker('.' + arr[1])(elementronico) //DONE con recursividad.
-      }
-      return false
+      return matchFunctionMaker(miTag)(ele) && matchFunctionMaker('.' + miClass)(ele) 
     }
   } else if (selectorType === "tag") {
-    return function (elementus) {
+    matchFunction = (elementus) => {
       return (elementus.tagName === selector.toUpperCase())
     }
   }
-  return false;
+  return matchFunction;
 };
 
 
