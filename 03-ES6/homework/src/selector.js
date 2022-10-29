@@ -1,16 +1,26 @@
 
-var traverseDomAndCollectElements = function (matchFunc, startEl) {
-  var resultSet = [];
+var traverseDomAndCollectElements = function (matchFunc, startEl, resultSet = []) {
+  // var resultSet = [];
   if (typeof startEl === "undefined") {
-    startEl = document.body;
+    var startEl = document.body;
   }
   // recorre el árbol del DOM y recolecta elementos que matchien en resultSet
   // usa matchFunc para identificar elementos que matchien
   // TU CÓDIGO AQUÍ
 
+  //1ro checkea si matchiea
+  if (matchFunc(startEl)) {
+    //va rellenando el array con los q encuentre
+    resultSet.unshift(startEl)
 
-
-  traverseDomAndCollectElements(matchFunc, startEl)
+  }
+  //debo hacer procedimientos recursivos sin retorno
+  //voy a usar .nextElementSibling y .firstElementChild
+  //checkea primer nivel y va rellenando array
+  if (startEl.firstElementChild) traverseDomAndCollectElements(matchFunc, startEl.firstElementChild, resultSet)
+  if (startEl.nextElementSibling) traverseDomAndCollectElements(matchFunc, startEl.nextElementSibling, resultSet)
+  //devuelve el array rellenado
+  return resultSet
 };
 
 // Detecta y devuelve el tipo de selector
@@ -72,6 +82,11 @@ var matchFunctionMaker = function (selector) {
 var $ = function (selector) {
   var elements;
   var selectorMatchFunc = matchFunctionMaker(selector); //crea una funcion por closure
-  elements = traverseDomAndCollectElements(selectorMatchFunc);
+  elements = traverseDomAndCollectElements(selectorMatchFunc); //le pasa UN callback
+  //dentro de traverseDomAndCollectELements()
+  // debemos invocar selectorMatchFunc(conCadaElementoEncontrado)
+  //y esa funcion rellena un array
   return elements;
 };
+
+
