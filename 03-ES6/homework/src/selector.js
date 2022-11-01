@@ -26,8 +26,9 @@ var selectorTypeMatcher = function (selector) {
   // tu código aquí
   if (selector.charAt(0) === '.') return 'class'
   if (selector.charAt(0) === '#') return 'id'
-  let str = selector.split('.')
-  if (str.length === 2) return 'tag.class'
+  if (selector.includes('.')) return 'tag.class'
+  if (selector.includes('>')) return 'jerarKIKO'
+  if (selector.includes(' ')) return 'wrapped'
   return 'tag'
 
 };
@@ -64,29 +65,33 @@ var matchFunctionMaker = function (selector) {
     matchFunction = (elementus) => {
       return (elementus.tagName === selector.toUpperCase())
     }
-  }
+  } else if (selectorType === "jerarKIKO") {
+    matchFunction = (elementus) => {
+      let unspcd = selector.replace(/\s+/g, '') //remueve espacios
+      let arrayos = unspcd.split('>') //crea array de tags sin ">"
+      return (matchFunctionMaker(arrayos.pop())(elementus)
+        && matchFunctionMaker(reMix(arrayos, '>'))(elementus.parentElement))
+    }
+  }  else if (selectorType === "wrapper") {
+    // matchFunction = (elementus) => {
+    //   let arrayos = unspcd.split(' ')
+    //   if(!elementus.parentElement) return false
+    //   if (matchFunctionMaker(arrayos[arrayos.length - 2])) return true
+    //   arrayos.pop()
+    //   return matchFunctionMaker(reMix(arrayos, ' '))(elementus.parentElement)
+    // }
+  } 
   return matchFunction;
 };
 
-// $('div > img')
-// seleccionaría todos los <img> tags 
-// hijos directos de <div> tags.
-var jerarKIKO = function (selector, elements) {
-  const [tagPadre, tagHijo] = selector.split(' > ')
-  const arrHijos = $(tagHijo)
-  console.log(arrHijos)
-  for (const hijo of arrHijos) {
-    if (hijo.parentElement) {
-      if (hijo.parentElement.tagName == tagPadre.toUpperCase()) {
-        elements.push(hijo)
-      }
-    }
-  }
-  return elements
+var reMix = (arrayos, joinerSTR) => { //entra array
+  // devuelve string juntadito
+  return arrayos.join(joinerSTR)
 }
+//$ devuelve array de elementos correctos
 var $ = function (selector) {
   var elements = [];
-  if (selector.includes(' > ')) return jerarKIKO(selector, elements)
+  // if (selector.includes(' > ')) return jerarKIKO(selector, elements)
   var selectorMatchFunc = matchFunctionMaker(selector);
   elements = traverseDomAndCollectElements(selectorMatchFunc);
   return elements;
